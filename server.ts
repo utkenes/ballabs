@@ -241,7 +241,7 @@ Yalnızca geçerli JSON döndür, markdown bloğu ekleme.`;
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Bal Labs Server] Running on http://0.0.0.0:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   });
 }
 
