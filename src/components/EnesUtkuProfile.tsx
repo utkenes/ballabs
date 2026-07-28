@@ -144,7 +144,7 @@ export const EnesUtkuProfile: React.FC = () => {
             <div className="pt-4 border-t border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <a
-                  href="https://github.com/enesutku"
+                  href="https://github.com/utkenes"
                   target="_blank"
                   rel="noreferrer"
                   className="p-2 rounded-xl bg-[#131622] hover:bg-white/10 text-slate-300 hover:text-amber-400 transition-colors"
@@ -153,7 +153,7 @@ export const EnesUtkuProfile: React.FC = () => {
                   <Github className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://linkedin.com/in/enesutku"
+                  href="https://linkedin.com/in/ibrahim-enes-utku-27b1bb309/"
                   target="_blank"
                   rel="noreferrer"
                   className="p-2 rounded-xl bg-[#131622] hover:bg-white/10 text-slate-300 hover:text-amber-400 transition-colors"
