@@ -3,7 +3,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
+import { Resend } from "resend";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -42,25 +45,66 @@ async function startServer() {
     });
   });
 
-  // Contact / Project Inquiry API
-  app.post("/api/contact", (req, res) => {
-    const { name, email, company, projectType, budget, message } = req.body;
+// Contact / Project Inquiry API
+app.post("/api/contact", async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      company,
+      projectType,
+      budget,
+      message,
+    } = req.body;
 
     if (!name || !email || !message) {
       return res.status(400).json({
         success: false,
-        error: "Lütfen adınız, e-posta adresiniz ve mesajınızı eksiksiz doldurun.",
+        error:
+          "Lütfen adınız, e-posta adresiniz ve mesajınızı eksiksiz doldurun.",
       });
     }
 
-    const refId = "BAL-" + Math.floor(100000 + Math.random() * 900000);
+    const refId = `BAL-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    console.log(`[Bal Labs Inquiry] Ref: ${refId} from ${name} (${email}) - ${projectType}`);
+    const { data, error } = await resend.emails.send({
+      from: "Bal Labs <onboarding@resend.dev>",
+      to: ["utk.enes@gmail.com"],
+      replyTo: email,
+      subject: `[${refId}] Yeni proje talebi - ${name}`,
+      text: `
+Yeni Bal Labs proje talebi
 
-    return res.json({
+Referans: ${refId}
+Ad Soyad: ${name}
+E-posta: ${email}
+Şirket: ${company || "Belirtilmedi"}
+Proje Türü: ${projectType || "Özel Yazılım Projesi"}
+Bütçe: ${budget || "Esnek"}
+
+Mesaj:
+${message}
+      `.trim(),
+    });
+
+    if (error) {
+      console.error("Resend gönderim hatası:", error);
+
+      return res.status(500).json({
+        success: false,
+        error: "Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+      });
+    }
+
+    console.log(
+      `[Bal Labs Inquiry] Ref: ${refId} from ${name} (${email})`,
+      data,
+    );
+
+    return res.status(200).json({
       success: true,
       refId,
-      message: `Teşekkürler ${name}. Talebiniz Enes Utku ve Bal Labs ekibine ulaştı. 24 saat içinde dönüş yapılacaktır.`,
+      message: `Teşekkürler ${name}. Talebiniz Bal Labs ekibine ulaştı.`,
       summary: {
         refId,
         name,
@@ -71,7 +115,15 @@ async function startServer() {
         createdAt: new Date().toISOString(),
       },
     });
-  });
+  } catch (error) {
+    console.error("Contact API hatası:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: "Sunucuda beklenmeyen bir hata oluştu.",
+    });
+  }
+});
 
   // AI Architect & Project Estimator Consultant powered by Gemini
   app.post("/api/ai-consultant", async (req, res) => {
@@ -220,7 +272,7 @@ Yalnızca geçerli JSON döndür, markdown bloğu ekleme.`;
         "og:description": cleanDesc,
         "og:type": "website",
         "twitter:card": "summary_large_image",
-        "twitter:creator": "@enesutku",
+        "twitter:creator": "@",
       }
     });
   });
