@@ -1,0 +1,6 @@
+{
+  "name": "Bal Labs",
+  "description": "Modern, minimalist ve karanlık mod temalı Bal Labs yazılım şirketi web sitesi. Lead Developer Enes Utku yönetiminde yüksek performanslı yazılım çözümleri.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
